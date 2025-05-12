@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Test IQ - 30 de Întrebări cu Timer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #555, #8a2be2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      background-color: rgba(224, 211, 211, 0.2);
+      width: 400px;
+      padding: 20px;
+      border-radius: 15px;
+      text-align: center;
+      color: #333;
+      box-shadow: 0 4px 10px #000000;
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 15px;
+      color: #000000; 
+    }
+    .timer {
+      text-align: center;
+      font-size: 18px;
+      margin-bottom: 15px;
+      color:  #b30a0a;
+    }
+    .question {
+      margin-bottom: 20px;
+    }
+    .question h3 {
+      font-size: 20px;
+      margin-bottom: 15px;
+      color: #000000;
+    }
+    .options {
+      list-style: none;
+      padding: 0;
+    }
+    .options li {
+      background-color: #b0b0b0;
+      margin: 10px auto;
+      border-radius: 10px;
+      padding: 10px;
+      width: 80%;
+      text-align: center;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s;
+      color: #333;
+    }
+    .options li:hover {
+      background-color: #9a4ead; 
+      color: #fff;
+    }
+    input[type="radio"] {
+      margin-right: 10px;
+      color: #8a2be2;
+    }
+    .next-btn {
+      background-color: #8a2be2;
+      color: #fff;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+      width: 100%;
+      margin-top: 20px;
+      transition: background 0.3s;
+    }
+    .next-btn:hover {
+      background-color: #7a249e;
+    }
+    .result {
+      text-align: center;
+      font-size: 1.3em;
+      margin-top: 30px;
+      font-weight: 700;
+      padding: 15px;
+      border-radius: 5px;
+      display: none;
+    }
+    .result.geniu {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    .result.destept {
+      background-color: #fff3cd;
+      color: #856404;
+    }
+    .result.downbad {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Test IQ</h1>
+    <div id="quiz-container"></div>
+    <div id="result" class="result"></div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "1. Care este următorul număr în secvență: 2, 4, 8, 16, ?",
+        options: ["32", "24", "20", "18"],
+        answer: "32"
+      },
+      {
+        question: "2. Care cuvânt nu se potrivește: măr, banană, portocală, roșu?",
+        options: ["măr", "banană", "portocală", "roșu"],
+        answer: "roșu"
+      },
+      {
+        question: "3. Dacă toate P sunt Q și toate Q sunt R, atunci toate P sunt R?",
+        options: ["da", "nu"],
+        answer: "da"
+      },
+      {
+        question: "4. Ce literă urmează în șirul: O, T, T, F, F, S, S, ?",
+        options: ["E", "N", "T", "D"],
+        answer: "E"
+      },
+      {
+        question: "5. Ce număr urmează în șir: 1, 1, 2, 3, 5, 8, ?",
+        options: ["11", "13", "15", "10"],
+        answer: "13"
+      },
+      {
+        question: "6. Ce se întâmplă cu umbra ta când soarele este direct deasupra?",
+        options: ["Dispare", "Devine mai mică", "Devine mai mare", "Nu se schimbă"],
+        answer: "Dispare"
+      },
+      {
+        question: "7. Care este opusul cuvântului „optimist”?",
+        options: ["Pesimist", "Realist", "Pragmatic", "Idealist"],
+        answer: "Pesimist"
+      },
+      {
+        question: "8. Dacă 5 maimuțe pot mânca 5 banane în 5 minute, câte banane pot mânca 10 maimuțe în 10 minute?",
+        options: ["10", "20", "5", "15"],
+        answer: "10"
+      },
+      {
+        question: "9. Ce formă are o minge?",
+        options: ["Cubică", "Sferică", "Cilindrică", "Conică"],
+        answer: "Sferică"
+      },
+      {
+        question: "10. Ce este mai greu: un kilogram de fier sau un kilogram de pene?",
+        options: ["Fierul", "Penele", "Sunt egale", "Nu se poate spune"],
+        answer: "Sunt egale"
+      },
+      {
+        question: "11. Completează șirul: A, C, E, G, ?",
+        options: ["H", "I", "J", "K"],
+        answer: "I"
+      },
+      {
+        question: "12. Care este al treilea cuvânt al acestei propoziții?",
+        options: ["este", "al", "treilea", "cuvânt"],
+        answer: "treilea"
+      },
+      {
+        question: "13. Dacă un ceas arată 3:15, cât de mult se rotesc acele într-o oră?",
+        options: ["360°", "390°", "405°", "450°"],
+        answer: "405°"
+      },
+      {
+        question: "14. Ce număr completează șirul: 2, 4, 6, 8, ?",
+        options: ["9", "10", "12", "11"],
+        answer: "10"
+      },
+      {
+        question: "15. Dacă astăzi este marți, ce zi va fi peste 5 zile?",
+        options: ["Duminică", "Luni", "Sâmbătă", "Miercuri"],
+        answer: "Duminică"
+      },
+      {
+        question: "16. Câte litere are alfabetul englez?",
+        options: ["24", "25", "26", "27"],
+        answer: "26"
+      },
+      {
+        question: "17. Ce planetă este cea mai apropiată de Soare?",
+        options: ["Venus", "Marte", "Mercur", "Pământ"],
+        answer: "Mercur"
+      },
+      {
+        question: "18. Ce animal este cunoscut ca „regele junglei”?",
+        options: ["Elefant", "Tigru", "Leu", "Urs"],
+        answer: "Leu"
+      },
+      {
+        question: "19. Ce element chimic are simbolul O?",
+        options: ["Aur", "Oxigen", "Argint", "Osmium"],
+        answer: "Oxigen"
+      },
+      {
+        question: "20. Dacă toate merele sunt fructe și unele fructe sunt verzi, pot exista mere verzi?",
+        options: ["Da", "Nu"],
+        answer: "Da"
+      },
+      {
+        question: "21. Ce se întâmplă cu apa la 100°C la presiune atmosferică?",
+        options: ["Îngheață", "Fierbe", "Se condensează", "Se evaporă lent"],
+        answer: "Fierbe"
+      },
+      {
+        question: "22. Care este capitala Franței?",
+        options: ["Lyon", "Paris", "Marseille", "Bordeaux"],
+        answer: "Paris"
+      },
+      {
+        question: "23. Ce limbă se vorbește în Brazilia?",
+        options: ["Spaniolă", "Portugheză", "Franceză", "Engleză"],
+        answer: "Portugheză"
+      },
+      {
+        question: "24. Ce instrument muzical are clape?",
+        options: ["Chitara", "Tobe", "Pian", "Vioară"],
+        answer: "Pian"
+      },
+      {
+        question: "25. Ce culoare rezultă din amestecul roșului și al albastrului?",
+        options: ["Verde", "Mov", "Portocaliu", "Maro"],
+        answer: "Mov"
+      },
+      {
+        question: "26. Cât de multe luni are un an?",
+        options: ["10", "11", "12", "13"],
+        answer: "12"
+      },
+      {
+        question: "27. Ce fruct este cunoscut pentru a fi galben și curbat?",
+        options: ["Măr", "Banana", "Piersică", "Castravete"],
+        answer: "Banana"
+      },
+      {
+        question: "28. Ce instrument se folosește pentru a măsura temperatura?",
+        options: ["Barometru", "Termometru", "Hidrometru", "Anemometru"],
+        answer: "Termometru"
+      },
+      {
+        question: "29. Ce culoare are cerul într-o zi senină?",
+        options: ["Verde", "Roșu", "Albastru", "Galben"],
+        answer: "Albastru"
+      },
+      {
+        question: "30. Dacă jumătate dintr-un număr este 10, cât este numărul complet?",
+        options: ["15", "20", "25", "30"],
+        answer: "20"
+      }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let timerInterval;
+    const totalQuestions = questions.length;
+    const questionTime = 30;
+
+    const quizContainer = document.getElementById('quiz-container');
+    const resultDiv = document.getElementById('result');
+    function showQuestion(index) {
+      quizContainer.innerHTML = "";
+      if (index >= totalQuestions) {
+        displayResult();
+        return;
+      }
+      const questionObj = questions[index];
+      const timerDiv = document.createElement('div');
+      timerDiv.className = "timer";
+      timerDiv.id = "timer";
+      timerDiv.textContent = `Timp rămas: ${questionTime} secunde`;
+      quizContainer.appendChild(timerDiv);
+      const questionDiv = document.createElement('div');
+      questionDiv.className = "question active";
+      const questionHeader = document.createElement('h3');
+      questionHeader.textContent = questionObj.question;
+      questionDiv.appendChild(questionHeader);
+      const optionsList = document.createElement('ul');
+      optionsList.className = "options";
+      questionObj.options.forEach((option, i) => {
+        const li = document.createElement('li');
+        const input = document.createElement('input');
+        input.type = "radio";
+        input.name = "option";
+        input.id = `option${i}`;
+        input.value = option;
+        const label = document.createElement('label');
+        label.htmlFor = `option${i}`;
+        label.textContent = option;
+        li.appendChild(input);
+        li.appendChild(label);
+        optionsList.appendChild(li);
+      });
+      questionDiv.appendChild(optionsList);
+      quizContainer.appendChild(questionDiv);
+      const nextButton = document.createElement('button');
+      nextButton.className = "next-btn";
+      nextButton.textContent = (index === totalQuestions - 1) ? "Finalizează" : "Următoarea";
+      nextButton.onclick = () => { submitAnswer(); };
+      quizContainer.appendChild(nextButton);
+      startTimer(questionTime);
+    }
+    function startTimer(seconds) {
+      const timerDiv = document.getElementById('timer');
+      let timeLeft = seconds;
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        timerDiv.textContent = `Timp rămas: ${timeLeft} secunde`;
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          submitAnswer();
+        }
+      }, 1000);
+    }
+    function submitAnswer() {
+      clearInterval(timerInterval);
+      const selectedOption = document.querySelector('input[name="option"]:checked');
+      if (selectedOption && selectedOption.value === questions[currentQuestionIndex].answer) {
+        score++;
+      }
+      currentQuestionIndex++;
+      showQuestion(currentQuestionIndex);
+    }
+    function displayResult() {
+      quizContainer.innerHTML = "";
+      let message = "";
+      let resultClass = "";
+      if (score === totalQuestions) {
+        message = "Ești un geniu!";
+        resultClass = "geniu";
+      } else if (score >= totalQuestions * 0.7) {
+        message = "Ești deștept!";
+        resultClass = "destept";
+      } else {
+        message = "Mai incearcă!";
+        resultClass = "incearcă";
+      }
+      resultDiv.textContent = `Scorul tău: ${score} / ${totalQuestions}. ${message}`;
+      resultDiv.classList.add(resultClass);
+      resultDiv.style.display = "block";
+    }
+    showQuestion(currentQuestionIndex);
+  </script>
+</body>
+</html>
